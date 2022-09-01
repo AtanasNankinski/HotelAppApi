@@ -51,9 +51,9 @@ class HotelActionsController extends Controller
 
     function getHotelByReceptionist($receptionist_id){
         if ($receptionist_id != null && $receptionist_id != "") {
-            return Hotel::where('manager', $receptionist_id)->first();
+            return Hotel::where('receptionist', $receptionist_id)->first();
         }else {
-            return response(['message' => 'Owner id is empty!'], 422);
+            return response(['message' => 'Receptionist id is empty!'], 422);
         }
     }
 
@@ -95,7 +95,7 @@ class HotelActionsController extends Controller
         $rules = array(
             'reservation_type' => 'required|string',
             'room_type' => 'required|string',
-            'room_number' => 'required|integer',
+            'room_number' => 'required|string',
             'start_date' => 'required|string',
             'end_date' => 'required|string',
             'additional_service' => 'required|boolean',
@@ -105,7 +105,8 @@ class HotelActionsController extends Controller
         $validator = Validator::make($req->all(), $rules);
 
         if ($validator -> fails()) {
-            return response(['message' => "Validation for fields failed!"], 422);
+            $failedRules = $validator->failed();
+            return response(['message' => $failedRules], 422);
         }
 
         if (Util::validateDate($req['start_date']) && Util::validateDate($req['end_date'])) {
