@@ -35,7 +35,7 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request){
-    	auth()->user()->tokens()->delete();
+    	$request->user()->tokens()->delete();
 
     	return response([
     		'message' => 'Logged out'
@@ -52,7 +52,7 @@ class AuthController extends Controller
     	$user = User::where('email', $fields['email'])->first();
 
     	//Checking password
-    	if(!$user || Hash::check($fields['password'], $user->password)){
+    	if(!$user || !Hash::check($fields['password'], $user->password)){
     		return response(['message' => 'Invalid email or password'], 401);
     	}else {
     		$token = $user->createToken('testapptoken')->plainTextToken;
